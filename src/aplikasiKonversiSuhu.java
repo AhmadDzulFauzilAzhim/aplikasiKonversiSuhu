@@ -1,5 +1,7 @@
 
 import javax.swing.JOptionPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -31,6 +33,7 @@ public class aplikasiKonversiSuhu extends javax.swing.JFrame {
             public void changedUpdate(DocumentEvent e) {
                konversiOtomatis();
             }
+        });
     }
 
     /**
@@ -64,6 +67,11 @@ public class aplikasiKonversiSuhu extends javax.swing.JFrame {
                 jTextField1ActionPerformed(evt);
             }
         });
+        jTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTextField1KeyTyped(evt);
+            }
+        });
 
         jRadioButton1.setText("Dari asal ke tujuan");
         jRadioButton1.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -76,6 +84,11 @@ public class aplikasiKonversiSuhu extends javax.swing.JFrame {
         jRadioButton2.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jRadioButton2StateChanged(evt);
+            }
+        });
+        jRadioButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton2ActionPerformed(evt);
             }
         });
 
@@ -255,6 +268,18 @@ public class aplikasiKonversiSuhu extends javax.swing.JFrame {
      }
     }//GEN-LAST:event_jRadioButton2StateChanged
 
+    private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jRadioButton2ActionPerformed
+
+    private void jTextField1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+        if (!Character.isDigit(c) && c != '.') {
+        evt.consume();
+      }
+    }//GEN-LAST:event_jTextField1KeyTyped
+
     private double konversiSuhu(double input, String from, String to) {
         double result = input;
 
@@ -278,6 +303,38 @@ public class aplikasiKonversiSuhu extends javax.swing.JFrame {
 
         return result;
     }
+    
+     private String getSymbol(String scale) {
+        switch (scale) {
+            case "Celcius": return "°C";
+            case "Fahrenheit": return "°F";
+            case "Reamur": return "°Ré";
+            case "Kelvin": return "K";
+            default: return "";
+        }
+    }    
+   
+private void konversiOtomatis() {
+    try {
+        if (!jTextField1.getText().isEmpty()) {
+            double input = Double.parseDouble(jTextField1.getText());
+            String fromScale = jComboBox1.getSelectedItem().toString();
+            String toScale = jComboBox2.getSelectedItem().toString();
+
+            if (jRadioButton1.isSelected()) {
+                double result = konversiSuhu(input, fromScale, toScale);
+                jTextField2.setText(String.format("%.2f %s", result, getSymbol(toScale)));
+            } else if (jRadioButton2.isSelected()) {
+                double result = konversiSuhu(input, toScale, fromScale);
+                jTextField2.setText(String.format("%.2f %s", result, getSymbol(fromScale)));
+            }
+        } else {
+            jTextField2.setText("");
+        }
+    } catch (NumberFormatException ex) {
+        jTextField2.setText("");
+    }
+}
     
     /**
      * @param args the command line arguments
